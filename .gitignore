@@ -1,0 +1,10 @@
+.lego
+.idea
+.vscode/
+dist/
+builds/
+logs/
+vendor/
+*.log
+database/
+db/
