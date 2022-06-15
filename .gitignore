@@ -6,5 +6,4 @@ builds/
 logs/
 vendor/
 *.log
-database/
 db/
