@@ -3,6 +3,7 @@ package providers
 import (
 	"github.com/spf13/viper"
 	"github.com/tulanz/base/nlp"
+	"github.com/tulanz/base/nlp/hanlp"
 	"github.com/tulanz/base/nlp/tencent"
 	"go.uber.org/zap"
 )
@@ -22,6 +23,9 @@ func NewNlpProvider(vip *viper.Viper, logger *zap.Logger) (nlp.Summary, error) {
 		secretId := config.GetString("secretId")
 		secretKey := config.GetString("secretKey")
 		return tencent.NewTencentAI(secretId, secretKey, region)
+	case "hanlp":
+		token := config.GetString("token")
+		return hanlp.NewHanlpAI(token)
 	default:
 		return &nlp.Default{}, nil
 	}

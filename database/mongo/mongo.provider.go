@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"log"
 	"reflect"
 	"time"
@@ -17,13 +18,21 @@ import (
 
 func NewMongoDB(config *viper.Viper) (*mongo.Database, error) {
 
-	connectionString := config.GetString("mongo.url")
+	connectionString := config.GetStringSlice("mongo.addr")
 	database := config.GetString("mongo.database")
 
-	option := options.Client().ApplyURI(connectionString)
+	option := options.Client()
 	rb := bson.NewRegistryBuilder()
 	rb.RegisterTypeDecoder(reflect.TypeOf(time.Time{}), bsoncodec.NewTimeCodec(bsonoptions.TimeCodec().SetUseLocalTimeZone(true)))
-	option.SetRegistry(rb.Build())
+
+	option.
+		SetAuth(options.Credential{
+			AuthSource: config.GetString("mongo.AuthSource"),
+			Username:   config.GetString("mongo.Username"),
+			Password:   config.GetString("mongo.Password"),
+		}).
+		SetHosts(connectionString).SetConnectTimeout(500 * time.Millisecond).SetHeartbeatInterval(15 * time.Second).
+		SetRegistry(rb.Build())
 
 	client, err := mongo.Connect(context.Background(), option)
 	if err != nil {
@@ -35,6 +44,42 @@ func NewMongoDB(config *viper.Viper) (*mongo.Database, error) {
 		log.Fatalf("Error pinging the mongo database: %s", err)
 		return nil, err
 	}
+	return client.Database(database), nil
+}
 
+func NewMongoProvider(config *viper.Viper) (*mongo.Database, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	//链接单节点 mongodb
+	connectionString := config.GetStringSlice("mongo.addr")
+	database := config.GetString("mongo.database")
+
+	if len(connectionString) == 0 {
+		return nil, errors.New("addr is empty")
+	}
+
+	// Set client options
+	option := options.Client().SetHosts(connectionString)
+	option.SetConnectTimeout(500 * time.Millisecond)
+	option.SetHeartbeatInterval(15 * time.Second)
+	option.SetAuth(options.Credential{
+		AuthMechanism:           "MONGODB-X509",
+		AuthMechanismProperties: map[string]string{"foo": "bar"},
+		AuthSource:              "$external",
+		Password:                "supersecurepassword",
+		Username:                "admin",
+	})
+	client, err := mongo.Connect(ctx, option)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Check the connection
+	if err = client.Ping(ctx, nil); err != nil {
+		return nil, err
+	}
 	return client.Database(database), nil
 }
