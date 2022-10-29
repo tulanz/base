@@ -3,22 +3,22 @@ module github.com/tulanz/base
 go 1.19
 
 require (
-	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1823
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1835
 	github.com/asim/go-micro/v3 v3.7.1
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/jinzhu/inflection v1.0.0
 	github.com/minio/minio-go/v7 v7.0.42
-	github.com/olivere/elastic/v7 v7.0.32
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/samber/lo v1.33.0
 	github.com/spf13/viper v1.13.0
 	github.com/streadway/amqp v1.0.0
-	github.com/stretchr/testify v1.8.1
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.520
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/nlp v1.0.520
-	github.com/tulanz/pkg v0.0.0-20221024103220-bda2f1d04c79
+	github.com/stretchr/testify v1.8.0
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.525
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/nlp v1.0.525
+	github.com/tulanz/elastic/v7 v7.0.33
+	github.com/tulanz/pkg v1.0.1
 	go.mongodb.org/mongo-driver v1.10.3
 	go.uber.org/fx v1.18.2
 	go.uber.org/zap v1.23.0

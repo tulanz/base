@@ -3,7 +3,7 @@ package elasticsearch
 import (
 	"errors"
 
-	"github.com/olivere/elastic/v7"
+	"github.com/tulanz/elastic/v7"
 	"github.com/spf13/viper"
 )
 

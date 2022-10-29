@@ -10,7 +10,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/olivere/elastic/v7"
+	"github.com/tulanz/elastic/v7"
 	_reflect "github.com/tulanz/base/reflect"
 	"go.uber.org/zap"
 )

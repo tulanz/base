@@ -3,7 +3,7 @@ package elasticsearch
 import (
 	"context"
 
-	"github.com/olivere/elastic/v7"
+	"github.com/tulanz/elastic/v7"
 	"github.com/tulanz/base/datasource"
 	"github.com/tulanz/base/multitenancy"
 	"go.uber.org/zap"
