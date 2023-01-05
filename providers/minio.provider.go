@@ -19,7 +19,7 @@ type Store struct {
 	s3         *minio.Client
 	logger     *zap.Logger
 	BucketName string
-	domain     string
+	Domain     string
 }
 
 func NewStoreProvider(vip *viper.Viper, logger *zap.Logger) (*Store, error) {
@@ -41,13 +41,13 @@ func NewStoreProvider(vip *viper.Viper, logger *zap.Logger) (*Store, error) {
 	if err != nil {
 		panic(err)
 	}
-	return &Store{s3: minioClient, BucketName: buckerName, domain: domain, logger: logger}, nil
+	return &Store{s3: minioClient, BucketName: buckerName, Domain: domain, logger: logger}, nil
 }
 
 func (s *Store) PresignedUrl(ctx context.Context, path, filename string) string {
 
-	if strings.HasPrefix(path, s.domain) {
-		path = strings.TrimPrefix(path, s.domain)
+	if strings.HasPrefix(path, s.Domain) {
+		path = strings.TrimPrefix(path, s.Domain)
 	}
 
 	if strings.HasPrefix(path, "http") || path == "" {
@@ -76,7 +76,7 @@ func (s *Store) PutObject(ctx context.Context, path string, reader io.Reader, ob
 	}
 	s.logger.Info("Successfully uploaded", zap.String("objectName", path), zap.Any("info", oss))
 	s.logger.Info("PutObject", zap.String("Location", oss.Location))
-	return fmt.Sprintf("%s/%s", s.domain, path), nil
+	return fmt.Sprintf("%s/%s", s.Domain, path), nil
 }
 
 func (s *Store) DelObject(ctx context.Context, filepath string) (string, error) {
@@ -87,10 +87,10 @@ func (s *Store) DelObject(ctx context.Context, filepath string) (string, error) 
 	err := s.s3.RemoveObject(ctx, s.BucketName, filepath, opts)
 	if err != nil {
 		fmt.Println(err)
-		return fmt.Sprintf("%s/%s", s.domain, filepath), err
+		return fmt.Sprintf("%s/%s", s.Domain, filepath), err
 	}
 	s.logger.Info("Successfully deleted", zap.String("objectName", filepath))
-	return fmt.Sprintf("%s/%s", s.domain, filepath), nil
+	return fmt.Sprintf("%s/%s", s.Domain, filepath), nil
 }
 
 func (s *Store) GetPolicyToken(ctx context.Context, filepath string) (*url.URL, error) {
