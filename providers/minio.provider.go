@@ -92,3 +92,7 @@ func (s *Store) DelObject(ctx context.Context, filepath string) (string, error) 
 	s.logger.Info("Successfully deleted", zap.String("objectName", filepath))
 	return fmt.Sprintf("%s/%s", s.domain, filepath), nil
 }
+
+func (s *Store) GetPolicyToken(ctx context.Context, filepath string) (*url.URL, error) {
+	return s.s3.PresignedPutObject(ctx, s.BucketName, filepath, time.Hour)
+}
