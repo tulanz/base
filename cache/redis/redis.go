@@ -8,14 +8,14 @@ import (
 	"strings"
 	"time"
 
-	goredis "github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/tulanz/base/cache"
 	"go.uber.org/zap"
 )
 
 type RedisCache struct {
 	options cache.Options
-	r       *goredis.Client
+	r       *redis.Client
 }
 
 func NewCache(opts ...cache.Option) cache.Cache {
@@ -49,7 +49,7 @@ func (m *RedisCache) Options() cache.Options {
 	return m.options
 }
 
-func (m *RedisCache) connect() (*goredis.Client, error) {
+func (m *RedisCache) connect() (*redis.Client, error) {
 	addrs := m.options.Context.Value(addrsKey{}).([]string)
 	if len(addrs) == 0 {
 		addrs = []string{":6379"}
@@ -62,7 +62,7 @@ func (m *RedisCache) connect() (*goredis.Client, error) {
 	ctx := context.Background()
 
 	dbInt, _ := strconv.Atoi(db)
-	client := goredis.NewClient(&goredis.Options{
+	client := redis.NewClient(&redis.Options{
 		Addr:         strings.Join(addrs, ","),
 		Password:     password, // no password set
 		DB:           dbInt,    // use default DB
@@ -129,7 +129,7 @@ func (m *RedisCache) Set(ctx context.Context, key string, value interface{}, opt
 	}
 
 	if writeOpts.Expiry > 0 {
-		_, err = m.r.SetEX(ctx, key, data, writeOpts.Expiry).Result()
+		_, err = m.r.SetEx(ctx, key, data, writeOpts.Expiry).Result()
 	} else {
 		_, err = m.r.Set(ctx, key, data, -1).Result()
 	}
