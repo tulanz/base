@@ -4,8 +4,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tulanz/base/nlp"
 	"github.com/tulanz/base/nlp/hanlp"
-	"github.com/tulanz/base/nlp/tencent"
 	"go.uber.org/zap"
+	// "github.com/tulanz/base/nlp/tencent"
 )
 
 // nlp.Lexer{}.Default("百度是一家高科技公司")
@@ -18,11 +18,11 @@ func NewNlpProvider(vip *viper.Viper, logger *zap.Logger) (nlp.Summary, error) {
 	driver := config.GetString("driver")
 
 	switch driver {
-	case "tencent":
-		region := config.GetString("region")
-		secretId := config.GetString("secretId")
-		secretKey := config.GetString("secretKey")
-		return tencent.NewTencentAI(secretId, secretKey, region)
+	// case "tencent":
+	// 	region := config.GetString("region")
+	// 	secretId := config.GetString("secretId")
+	// 	secretKey := config.GetString("secretKey")
+	// 	return tencent.NewTencentAI(secretId, secretKey, region)
 	case "hanlp":
 		token := config.GetString("token")
 		return hanlp.NewHanlpAI(token)
