@@ -39,7 +39,7 @@ const (
 // Metadata is a mapping from metadata keys to values.
 type Metadata map[string]interface{}
 
-type mdKey struct{}
+// type mdKey struct{}
 
 // Len returns the number of items in md.
 func (md Metadata) Len() int {
@@ -75,22 +75,21 @@ func Join(mds ...Metadata) Metadata {
 
 // NewContext creates a new context with md attached.
 func NewContext(ctx context.Context, md Metadata) context.Context {
-	return context.WithValue(ctx, mdKey{}, md)
+	return context.WithValue(ctx, TenantId, md)
 }
 
 // FromContext returns the incoming metacode in ctx if it exists.  The
 // returned Metadata should not be modified. Writing to it may cause races.
 // Modification should be made to copies of the returned Metadata.
 func FromContext(ctx context.Context) (md Metadata, ok bool) {
-	md, ok = ctx.Value(mdKey{}).(Metadata)
+	md, ok = ctx.Value(TenantId).(Metadata)
 	return
 }
-func WithContext(ctx context.Context) context.Context {
-	md, ok := FromContext(ctx)
+func WithContext(ctx context.Context, tenantId string) context.Context {
+	meta, ok := FromContext(ctx)
 	if ok {
-		nmd := md.Copy()
-		// NOTE: temporary delete prevent asynchronous task reuse finished task
-		// delete(nmd, Trace)
+		nmd := meta.Copy()
+		nmd[TenantId] = tenantId
 		return NewContext(context.Background(), nmd)
 	}
 	return context.Background()
