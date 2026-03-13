@@ -74,23 +74,21 @@ func Join(mds ...Metadata) Metadata {
 }
 
 // NewContext creates a new context with md attached.
-func NewContext(ctx context.Context, md Metadata) context.Context {
+func NewContext(ctx context.Context, md string) context.Context {
 	return context.WithValue(ctx, TenantId, md)
 }
 
 // FromContext returns the incoming metacode in ctx if it exists.  The
 // returned Metadata should not be modified. Writing to it may cause races.
 // Modification should be made to copies of the returned Metadata.
-func FromContext(ctx context.Context) (md Metadata, ok bool) {
-	md, ok = ctx.Value(TenantId).(Metadata)
-	return
+func FromContext(ctx context.Context) (string, bool) {
+	tenantId, ok := ctx.Value(TenantId).(string)
+	return tenantId, ok
 }
 func WithContext(ctx context.Context, tenantId string) context.Context {
 	meta, ok := FromContext(ctx)
-	if ok {
-		nmd := meta.Copy()
-		nmd[TenantId] = tenantId
-		return NewContext(context.Background(), nmd)
+	if !ok {
+		meta = tenantId
 	}
-	return context.Background()
+	return NewContext(ctx, meta)
 }
